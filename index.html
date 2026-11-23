@@ -1,0 +1,908 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Birthday Surprise For You ❤️</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ min-height:100vh;
+ background:radial-gradient(ellipse at top,#704268,#29152f 55%,#100b20);
+ color:white;
+ font-family:Georgia,serif;
+ text-align:center;
+ overflow-x:hidden;
+}
+
+main{
+ position:relative;
+ z-index:2;
+ padding:35px 16px 80px;
+}
+
+h1{
+ font-size:clamp(38px,9vw,65px);
+ color:#ffd0e6;
+ text-shadow:0 0 25px #ff75b5;
+}
+
+h2{color:#ffc4df}
+p{line-height:1.8}
+
+.card{
+ max-width:550px;
+ margin:25px auto;
+ padding:28px 20px;
+ border:1px solid #ffffff35;
+ border-radius:25px;
+ background:#ffffff12;
+ backdrop-filter:blur(12px);
+ box-shadow:0 0 35px #ff80b522;
+}
+
+button{
+ border:0;
+ border-radius:40px;
+ padding:14px 24px;
+ margin:10px;
+ background:linear-gradient(120deg,#ff91bd,#ffe0ed);
+ color:#48172f;
+ font-weight:bold;
+ font-size:16px;
+ cursor:pointer;
+ transition:.2s;
+}
+
+button:hover{transform:scale(1.05)}
+button:disabled{opacity:.5;cursor:wait}
+.hidden{display:none!important}
+
+#sky{
+ position:fixed;
+ inset:0;
+ width:100%;
+ height:100%;
+ pointer-events:none;
+ z-index:1;
+}
+
+#countdown{
+ font-size:clamp(32px,8vw,50px);
+ color:#ffd0e4;
+ font-weight:bold;
+}
+
+#bombTimer{
+ font-size:75px;
+ color:#ffb5d5;
+ text-shadow:0 0 25px #ff4d9e;
+ margin:20px;
+}
+
+#bombResult{
+ color:#ffe0ed;
+ font-size:20px;
+}
+
+#letter{
+ white-space:pre-line;
+ font-size:17px;
+ line-height:2;
+ color:#ffe3ef;
+}
+
+.petal{
+ position:fixed;
+ top:-40px;
+ z-index:1;
+ pointer-events:none;
+ animation:fall linear forwards;
+}
+
+@keyframes fall{
+ to{
+  transform:translateY(110vh) rotate(600deg);
+  opacity:0;
+ }
+}
+
+.flower{
+ position:fixed;
+ bottom:-40px;
+ z-index:1;
+ pointer-events:none;
+ animation:rise 9s linear forwards;
+}
+
+@keyframes rise{
+ to{
+  transform:translateY(-110vh) rotate(360deg);
+  opacity:0;
+ }
+}
+
+.small{
+ color:#eacadd;
+ font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="sky"></canvas>
+
+<main>
+
+<!-- =================================
+     MIDNIGHT WAITING SCREEN
+================================= -->
+
+<section id="waiting">
+
+ <div style="font-size:65px">🌙 ✨ 🌹</div>
+
+ <h2>A little surprise is waiting...</h2>
+
+ <p>
+ Something beautiful is being prepared
+ especially for you.
+ </p>
+
+ <div id="countdown">00:00:00</div>
+
+ <p>Come back when the clock strikes midnight. 💗</p>
+
+</section>
+
+
+<!-- =================================
+     BIRTHDAY REVEAL
+================================= -->
+
+<section id="birthday" class="hidden">
+
+ <div style="font-size:55px">🌸 🦋 🌷</div>
+
+ <p style="letter-spacing:5px;color:#ffd4e6">
+ A DAY MADE JUST FOR YOU
+ </p>
+
+ <h1>HAPPY BIRTHDAY!</h1>
+
+ <h2 id="herName">MY BEAUTIFUL GIRL ❤️</h2>
+
+ <p>
+ Tonight the stars shine a little brighter,<br>
+ the flowers bloom a little prettier,<br>
+ because today someone truly special was born.
+ </p>
+
+ <div style="font-size:75px">🎂</div>
+
+ <h2>You deserve the entire universe! 💖</h2>
+
+ <div class="card">
+  <h2>🌹 A little reminder</h2>
+
+  <p>
+   You are beautiful, precious and irreplaceable.
+   Never forget how much happiness you bring
+   into this world.
+  </p>
+
+  <p>Sending you a million virtual roses! 🌹</p>
+ </div>
+
+ <button onclick="playMusic()">
+  🎵 Play birthday magic
+ </button>
+
+ <div class="card">
+  <h2>🎁 A SPECIAL GIFT</h2>
+
+  <p>
+   I've prepared something extraordinary
+   just for you...
+  </p>
+
+  <button onclick="startPranks()">
+   OPEN YOUR GIFT 🎀
+  </button>
+ </div>
+
+</section>
+
+
+<!-- =================================
+     PLAYFUL PRANKS
+================================= -->
+
+<section id="pranks" class="hidden">
+
+ <div class="card">
+
+  <div style="font-size:55px">🎁</div>
+
+  <h2 id="prankTitle">WAIT A SECOND 😂</h2>
+
+  <p id="prankText">Preparing your gift...</p>
+
+  <div id="progress"
+       style="font-size:35px;color:#ffc5df">
+   0%
+  </div>
+
+  <button id="prankButton" onclick="nextPrank()">
+   Continue 😈
+  </button>
+
+ </div>
+
+</section>
+
+
+<!-- =================================
+     HARMLESS COUNTDOWN PRANK
+================================= -->
+
+<section id="bomb" class="hidden">
+
+ <div class="card">
+
+  <div style="font-size:65px">💣</div>
+
+  <h1>OH NO!!</h1>
+
+  <h2>Birthday cuteness overload!</h2>
+
+  <p>
+   A completely harmless birthday countdown
+   is about to unleash a ridiculous amount
+   of love.
+  </p>
+
+  <div id="bombTimer">10</div>
+
+  <div id="bombResult"></div>
+
+  <button id="bombButton" onclick="startBomb()">
+   START COUNTDOWN 😈
+  </button>
+
+ </div>
+
+</section>
+
+
+<!-- =================================
+     FINAL EMOTIONAL SURPRISE
+================================= -->
+
+<section id="final" class="hidden">
+
+ <div style="font-size:65px">💐 💗 🌹</div>
+
+ <h1>YOU DID IT!!</h1>
+
+ <h2>Okay, enough trolling. 😂❤️</h2>
+
+ <div class="card">
+
+  <div style="font-size:60px">💌</div>
+
+  <p style="letter-spacing:3px;color:#ffd0e5">
+   A LITTLE SOMETHING FROM MY HEART
+  </p>
+
+  <h2>
+   To My Dearest
+   <span id="letterName">Beautiful</span> ❤️
+  </h2>
+
+  <p id="letter">
+Happy Birthday, beautiful! 🌷
+
+I honestly don't know where to begin,
+because a simple birthday wish could
+never be enough to express how special
+you are.
+
+Today, I just want you to remember
+how precious you are.
+
+If I could give you one thing in this world,
+it would be the ability to see yourself
+through my eyes, just for a moment.
+
+You would see how beautiful your smile is,
+how precious your presence feels,
+and how much happiness you deserve.
+
+May every little dream in your heart
+find its way into reality.
+
+May you always have reasons to smile,
+courage to chase everything you want,
+and beautiful memories to look back on.
+
+Never stop smiling.
+Never stop dreaming.
+Never stop being the wonderful person
+you are.
+
+And yes, I made you go through all
+those ridiculous birthday challenges
+just to get here. 😂
+
+But jokes aside, I genuinely hope
+this new chapter of your life brings
+you everything your heart wishes for.
+
+You deserve the world and so much more.
+
+HAPPIEST BIRTHDAY, BEAUTIFUL! 🎂❤️
+
+Sending you endless hugs, flowers,
+happiness and a million smiles.
+
+With lots of love,
+Someone who wanted to make your
+birthday a little more unforgettable. 💗
+  </p>
+
+  <div style="font-size:60px">
+   🌹 🌸 🦋 🌷
+  </div>
+
+  <h2>FOREVER STAY HAPPY! ❤️</h2>
+
+  <p class="small">
+   And yes... I made you suffer a little
+   to get here. 😂
+  </p>
+
+ </div>
+
+</section>
+
+</main>
+
+
+<script>
+
+// ========================================
+// 1. PERSONALIZATION - EDIT THESE TWO!
+// ========================================
+
+const HER_NAME = "Adeena";
+
+// Format: YYYY-MM-DD
+// Example: 2026-11-24
+const BIRTHDAY_DATE = "2026-11-24";
+
+document.getElementById("herName").textContent =
+ HER_NAME.toUpperCase() + " ❤️";
+
+document.getElementById("letterName").textContent =
+ HER_NAME;
+
+
+// ========================================
+// 2. MIDNIGHT COUNTDOWN - KARACHI TIME
+// ========================================
+
+const target = new Date(
+ BIRTHDAY_DATE + "T00:00:00+05:00"
+).getTime();
+
+let revealed = false;
+
+function checkTime(){
+
+ const remaining = target - Date.now();
+
+ if(remaining <= 0){
+
+  if(!revealed){
+
+   revealed = true;
+
+   document.getElementById("waiting")
+    .classList.add("hidden");
+
+   document.getElementById("birthday")
+    .classList.remove("hidden");
+
+   fireworks();
+   petals();
+   flowers();
+
+  }
+
+  return;
+ }
+
+ const hours = Math.floor(remaining/3600000);
+
+ const minutes = Math.floor(
+  (remaining%3600000)/60000
+ );
+
+ const seconds = Math.floor(
+  (remaining%60000)/1000
+ );
+
+ document.getElementById("countdown").textContent =
+  [hours,minutes,seconds]
+  .map(n=>String(n).padStart(2,"0"))
+  .join(":");
+
+}
+
+checkTime();
+const clock = setInterval(checkTime,250);
+
+
+// ========================================
+// 3. FLOATING PETALS
+// ========================================
+
+let petalStarted = false;
+
+function petals(){
+
+ if(petalStarted)return;
+ petalStarted=true;
+
+ setInterval(()=>{
+
+  const el=document.createElement("div");
+
+  el.className="petal";
+
+  const symbols=["🌸","🌹","🌷","💗","✨","🦋"];
+
+  el.textContent=symbols[
+   Math.floor(Math.random()*symbols.length)
+  ];
+
+  el.style.left=Math.random()*100+"vw";
+  el.style.fontSize=(15+Math.random()*22)+"px";
+  el.style.animationDuration=(6+Math.random()*5)+"s";
+
+  document.body.appendChild(el);
+
+  setTimeout(()=>el.remove(),11000);
+
+ },400);
+
+}
+
+
+// ========================================
+// 4. FLOATING FLOWERS
+// ========================================
+
+let flowerStarted = false;
+
+function flowers(){
+
+ if(flowerStarted)return;
+ flowerStarted=true;
+
+ setInterval(()=>{
+
+  const el=document.createElement("div");
+
+  el.className="flower";
+
+  const symbols=["🌹","🌷","🌸","💐","🦋"];
+
+  el.textContent=symbols[
+   Math.floor(Math.random()*symbols.length)
+  ];
+
+  el.style.left=Math.random()*100+"vw";
+  el.style.fontSize="28px";
+
+  document.body.appendChild(el);
+
+  setTimeout(()=>el.remove(),9500);
+
+ },1200);
+
+}
+
+
+// ========================================
+// 5. FIREWORKS
+// ========================================
+
+const canvas=document.getElementById("sky");
+const ctx=canvas.getContext("2d");
+
+let particles=[];
+
+function resize(){
+
+ canvas.width=window.innerWidth;
+ canvas.height=window.innerHeight;
+
+}
+
+resize();
+
+window.addEventListener("resize",resize);
+
+function burst(){
+
+ const x=Math.random()*canvas.width;
+ const y=Math.random()*canvas.height*.55;
+
+ const colors=[
+  "#ff9ecb",
+  "#ffe5a8",
+  "#d6a7ff",
+  "#ffffff",
+  "#ff75ad"
+ ];
+
+ for(let i=0;i<65;i++){
+
+  const angle=Math.random()*Math.PI*2;
+  const speed=1+Math.random()*5;
+
+  particles.push({
+
+   x,y,
+
+   vx:Math.cos(angle)*speed,
+   vy:Math.sin(angle)*speed,
+
+   life:65,
+
+   color:colors[
+    Math.floor(Math.random()*colors.length)
+   ]
+
+  });
+
+ }
+
+}
+
+let fireworksStarted=false;
+
+function fireworks(){
+
+ if(fireworksStarted)return;
+ fireworksStarted=true;
+
+ setInterval(burst,650);
+
+}
+
+function animate(){
+
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ particles.forEach(p=>{
+
+  p.x+=p.vx;
+  p.y+=p.vy;
+  p.vy+=.025;
+  p.life--;
+
+  ctx.globalAlpha=Math.max(0,p.life/65);
+  ctx.fillStyle=p.color;
+
+  ctx.beginPath();
+  ctx.arc(p.x,p.y,2,0,Math.PI*2);
+  ctx.fill();
+
+ });
+
+ particles=particles.filter(p=>p.life>0);
+
+ ctx.globalAlpha=1;
+
+ requestAnimationFrame(animate);
+
+}
+
+animate();
+
+
+// ========================================
+// 6. OPTIONAL SYNTHESIZED MUSIC
+// ========================================
+
+let audioContext=null;
+
+function playMusic(){
+
+ try{
+
+  const AC=window.AudioContext||window.webkitAudioContext;
+
+  audioContext=audioContext||new AC();
+
+  audioContext.resume();
+
+  const notes=[
+   523.25,659.25,783.99,659.25,523.25
+  ];
+
+  notes.forEach((note,i)=>{
+
+   const osc=audioContext.createOscillator();
+   const gain=audioContext.createGain();
+
+   const start=audioContext.currentTime+i*.45;
+
+   osc.frequency.value=note;
+
+   gain.gain.setValueAtTime(.0001,start);
+
+   gain.gain.exponentialRampToValueAtTime(
+    .07,start+.08
+   );
+
+   gain.gain.exponentialRampToValueAtTime(
+    .0001,start+.4
+   );
+
+   osc.connect(gain);
+   gain.connect(audioContext.destination);
+
+   osc.start(start);
+   osc.stop(start+.45);
+
+  });
+
+ }catch(error){
+
+  console.log("Audio unavailable",error);
+
+ }
+
+}
+
+
+// ========================================
+// 7. PLAYFUL PRANK SEQUENCE
+// ========================================
+
+let prankStage=0;
+let loadingTimer=null;
+
+function startPranks(){
+
+ document.getElementById("birthday")
+  .classList.add("hidden");
+
+ document.getElementById("pranks")
+  .classList.remove("hidden");
+
+ prankStage=0;
+
+ nextPrank();
+
+}
+
+function nextPrank(){
+
+ prankStage++;
+
+ const title=document.getElementById("prankTitle");
+ const txt=document.getElementById("prankText");
+ const progress=document.getElementById("progress");
+ const btn=document.getElementById("prankButton");
+
+ if(loadingTimer){
+
+  clearInterval(loadingTimer);
+  loadingTimer=null;
+
+ }
+
+
+ // PRANK 1: FAKE LOADING
+
+ if(prankStage===1){
+
+  title.textContent="GIFT LOADING... 🎁";
+
+  txt.textContent=
+   "Preparing your extremely expensive gift...";
+
+  progress.textContent="0%";
+
+  btn.disabled=true;
+
+  let n=0;
+
+  loadingTimer=setInterval(()=>{
+
+   n+=Math.floor(Math.random()*9)+3;
+
+   if(n>=99){
+
+    n=99;
+
+    clearInterval(loadingTimer);
+    loadingTimer=null;
+
+    txt.textContent=
+     "Oops! Stuck at 99%. 😂";
+
+    btn.disabled=false;
+    btn.textContent="FIX IT";
+
+   }
+
+   progress.textContent=n+"%";
+
+  },250);
+
+ }
+
+
+ // PRANK 2: FAKE GIFT
+
+ else if(prankStage===2){
+
+  title.textContent="GOTCHA! 💀";
+
+  txt.textContent=
+   "Your gift ran away. Even your gift is playing hard to get.";
+
+  progress.textContent="😂";
+
+  btn.disabled=false;
+  btn.textContent="CHASE THE GIFT";
+
+ }
+
+
+ // PRANK 3: VERIFICATION
+
+ else if(prankStage===3){
+
+  title.textContent="BIRTHDAY VERIFICATION 👑";
+
+  txt.textContent=
+   "Are you officially the birthday queen?";
+
+  progress.textContent="👑";
+
+  btn.textContent="YES, OBVIOUSLY";
+
+ }
+
+
+ // PRANK 4: COUNTDOWN SURPRISE
+
+ else if(prankStage===4){
+
+  document.getElementById("pranks")
+   .classList.add("hidden");
+
+  document.getElementById("bomb")
+   .classList.remove("hidden");
+
+ }
+
+
+ // PRANK 5: FINAL REVEAL
+
+ else{
+
+  document.getElementById("bomb")
+   .classList.add("hidden");
+
+  document.getElementById("final")
+   .classList.remove("hidden");
+
+  burst();
+  burst();
+  burst();
+
+  petals();
+  flowers();
+
+ }
+
+}
+
+
+// ========================================
+// 8. HARMLESS COUNTDOWN PRANK
+// ========================================
+
+let bombInterval=null;
+
+function startBomb(){
+
+ const timer=document.getElementById("bombTimer");
+ const result=document.getElementById("bombResult");
+ const btn=document.getElementById("bombButton");
+
+ if(bombInterval)return;
+
+ btn.disabled=true;
+
+ timer.textContent="10";
+ result.textContent="";
+
+ let n=10;
+
+ bombInterval=setInterval(()=>{
+
+  n--;
+
+  timer.textContent=n;
+
+  if(n<=0){
+
+   clearInterval(bombInterval);
+   bombInterval=null;
+
+   timer.textContent="💥💗";
+
+   result.innerHTML=
+    "<h2>BOOOOM!! 😂</h2>"+
+    "<p>You've been hit by 1,000,000 virtual hugs!</p>"+
+    "<p>HAPPY BIRTHDAY, QUEEN! 👑❤️</p>";
+
+   burst();
+   burst();
+   burst();
+
+   petals();
+   flowers();
+
+   btn.textContent="UNLOCK MY FINAL SURPRISE";
+
+   btn.disabled=false;
+
+   btn.onclick=finishBirthday;
+
+  }
+
+ },1000);
+
+}
+
+
+// ========================================
+// 9. FINAL BIRTHDAY LETTER
+// ========================================
+
+function finishBirthday(){
+
+ document.getElementById("bomb")
+  .classList.add("hidden");
+
+ document.getElementById("final")
+  .classList.remove("hidden");
+
+ burst();
+ burst();
+ burst();
+
+ petals();
+ flowers();
+
+}
+
+</script>
+
+</body>
+</html>
